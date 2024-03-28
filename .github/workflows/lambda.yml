@@ -35,11 +35,6 @@ jobs:
       ## 3. 該当ファイルをzipファイルとして圧縮し、指定AWSアカウントにアップロード
       - name: Lambda Build & Update
         run: |
-          pip3 install awscli 
-          for changed_file in ${{ steps.files.outputs.added_modified }}; do
-            if [[ ${changed_file##*.} == "py" ]]; then
-              cp `echo ${changed_file}` lambda_function.py && ls -al
-              zip -r package.zip lambda_function.py
-              aws lambda update-function-code --function-name `echo ${changed_file} | sed 's/src\///g' | sed 's/\.py//g'` --zip-file fileb://package.zip --publish
-            fi
-          done
+          pip3 install awscli
+          cd ./lambda/helloWorld && zip -r helloWorld.zip ./*
+          aws lambda update-function-code --function-name helloWorld --zip-file fileb://helloWorld.zip --publish

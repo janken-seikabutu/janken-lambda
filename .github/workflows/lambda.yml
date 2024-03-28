@@ -36,5 +36,5 @@ jobs:
       - name: Lambda Build & Update
         run: |
           pip3 install awscli
-          cd ./lambda/helloWorld && zip -r helloWorld.zip ./*
-          aws lambda update-function-code --function-name helloWorld --zip-file fileb://helloWorld.zip --publish
+          cd ./lambda && zip -r hello.zip ./*
+          aws lambda update-function-code --function-name hello --zip-file fileb://hello.zip --publish

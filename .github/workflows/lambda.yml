@@ -1,0 +1,45 @@
+name: Deploy to Lambda
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: jitterbit/get-changed-files@v1
+        id: files
+        with:
+          format: space-delimited
+        
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_LAMBDA }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_LAMBDA }}
+          aws-region: ap-northeast-1
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions
+
+      - name: Python Setup
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      ## pipでawscliをInstall
+      ## 1. 変更が発生した、ファイル一覧をForでLoopさせながら、特定拡張子を取得
+      ## 2. .py（現コード）を発見　→　ファイル名を lambda_function.pyに変更（現状運用中の関数のファイル名）
+      ## 3. 該当ファイルをzipファイルとして圧縮し、指定AWSアカウントにアップロード
+      - name: Lambda Build & Update
+        run: |
+          pip3 install awscli 
+          for changed_file in ${{ steps.files.outputs.added_modified }}; do
+            if [[ ${changed_file##*.} == "py" ]]; then
+              cp `echo ${changed_file}` lambda_function.py && ls -al
+              zip -r package.zip lambda_function.py
+              aws lambda update-function-code --function-name `echo ${changed_file} | sed 's/src\///g' | sed 's/\.py//g'` --zip-file fileb://package.zip --publish
+            fi
+          done

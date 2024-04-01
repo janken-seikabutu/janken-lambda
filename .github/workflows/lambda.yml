@@ -38,6 +38,6 @@ jobs:
           pip3 install awscli
           cd ./register_user && zip -r register_user.zip ./*
           aws lambda update-function-code --function-name janken-register-user --zip-file fileb://register_user.zip --publish
-          cd ./login_user && zip -r login_user.zip ./*
+          cd ./../login_user && zip -r login_user.zip ./*
           aws lambda update-function-code --function-name janken-login-user --zip-file fileb://login_user.zip --publish
           

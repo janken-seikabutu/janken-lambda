@@ -30,7 +30,7 @@ def login_user(event, context):
       markov_id = result["Items"][0]["markov_id"]
       game_count = result["Items"][0]["game_count"]
       previous_id = result["Items"][0]["previous_id"]
-      return {"name":user["name"], "markov_id":markov_id, "game_count":game_count, "previous_id":previous_id}
+      return json.dumps({"name":user["name"], "markov_id":markov_id, "game_count":game_count, "previous_id":previous_id})
     else:
-      return {"error":"パスワードが間違っています。"}
-  return {"error":"ユーザー名が間違っています。登録したユーザー名を入力してください。登録がまだの場合はユーザー登録をしてください。"}
+      return json.dumps({"error":"パスワードが間違っています。"})
+  return json.dumps({"error":"ユーザー名が間違っています。登録したユーザー名を入力してください。登録がまだの場合はユーザー登録をしてください。"})

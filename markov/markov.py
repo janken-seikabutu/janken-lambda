@@ -1,18 +1,19 @@
-from fastapi import APIRouter
-
 import os
-from os.path import join, dirname
-from dotenv import load_dotenv
 
 import boto3
 from boto3.session import Session
 from boto3.dynamodb.conditions import Key, Attr
 
 import json
-from pydantic import BaseModel
-import time
 
 import random
+
+session = Session(
+  aws_access_key_id=os.environ["AWS_DYNAMODB_ACCESSKEY"],
+  aws_secret_access_key=os.environ["AWS_DYNAMODB_SECRETKEY"],
+  region_name=os.environ["AWS_DYNAMODB_REGION"])
+
+dynamodb = session.resource("dynamodb")
 
 def markov_game(event, context):
   json_ob = event["body"]

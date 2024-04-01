@@ -17,14 +17,16 @@ session = Session(
 dynamodb = session.resource("dynamodb")
 
 def register_user(event, context):
-  user_name = event["body"]["name"]
+  json_ob = event["body"]
+  user = json.loads(json_ob)
+  user_name = user["name"]
   register_table = dynamodb.Table("janken-users")
   confilm = register_table.scan(
     FilterExpression = Attr("name").eq(f"{user_name}")
   )
   if confilm["Count"] == 0:
     register_pass_hash = hashlib.sha256()
-    register_pass_hash.update(event["body"]["password"].encode())
+    register_pass_hash.update(user["password"].encode())
     response = register_table.put_item(
       Item={
         "name": user_name,

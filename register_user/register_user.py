@@ -37,3 +37,4 @@ def register_user(event, context):
     )
     return json.dumps({"name":user_name, "markov_id":0, "game_count":0, "previous_id":0})
   return json.dumps({"error":"そのユーザーはすでに登録されています。別のユーザー名で登録してください。"})
+  

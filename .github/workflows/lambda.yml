@@ -40,4 +40,6 @@ jobs:
           aws lambda update-function-code --function-name janken-register-user --zip-file fileb://register_user.zip --publish
           cd ./../login_user && zip -r login_user.zip ./*
           aws lambda update-function-code --function-name janken-login-user --zip-file fileb://login_user.zip --publish
+          cd ./../markov && zip -r markov.zip ./*
+          aws lambda update-function-code --function-name janken-game-markov --zip-file fileb://markov.zip --publish
           

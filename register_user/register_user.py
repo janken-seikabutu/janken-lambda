@@ -17,15 +17,14 @@ session = Session(
 dynamodb = session.resource("dynamodb")
 
 def register_user(event, context):
-  user = json.loads(event)
-  user_name = user["name"]
+  user_name = event["name"]
   register_table = dynamodb.Table("janken-users")
   confilm = register_table.scan(
     FilterExpression = Attr("name").eq(f"{user_name}")
   )
   if confilm["Count"] == 0:
     register_pass_hash = hashlib.sha256()
-    register_pass_hash.update(user["password"].encode())
+    register_pass_hash.update(event["password"].encode())
     response = register_table.put_item(
       Item={
         "name": user_name,
@@ -37,4 +36,3 @@ def register_user(event, context):
     )
     return json.dumps({"name":user_name, "markov_id":0, "game_count":0, "previous_id":0})
   return json.dumps({"error":"そのユーザーはすでに登録されています。別のユーザー名で登録してください。"})
-  
